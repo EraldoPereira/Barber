@@ -1,6 +1,9 @@
-import React, { useState } from 'react'
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native'
+import React, { useState, useContext } from 'react'
+import { Text, View, StyleSheet, TouchableOpacity, Alert } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
+import AsyncStorage from '@react-native-community/async-storage'
+
+import { UserContext } from '../contexts/UserContext'
 
 import BarberLogo from '../assets/svg/barber.svg'
 import EmailIcon from '../assets/svg/email.svg'
@@ -8,20 +11,42 @@ import LockIcon from '../assets/svg/lock.svg'
 
 import SignInput from '../components/SignInput'
 
+import Api from '../Api'
+
 export default () => {
+
+    const { dispatch: userDispatch } = useContext(UserContext)
 
     const navigation = useNavigation()
 
-    const [emamilFild, setEmailFild] = useState('')
-    const [passwordFild, setPasswordFild] = useState('')
+    const [emailFild, setEmailFild] = useState('cleiton@hotmail.com')
+    const [passwordFild, setPasswordFild] = useState('1234')
 
-    const handleSignClick = () => {
-
+    const handleSignClick = async () => {
+        if (emailFild != '' && passwordFild != '') {
+            let json = await Api.signIn(emailFild, passwordFild)
+            if (json.token) {
+                await AsyncStorage.setItem('token', json.token)
+                userDispatch({
+                    type: 'setAvatar',
+                    payload: {
+                        avatar: json.data.avatar
+                    }
+                })
+                navigation.reset({
+                    routes: [{ name: 'MainTab' }]
+                })
+            } else {
+                Alert.alert("Erro ao fazer login", "Email ou senha incorretos")
+            }
+        } else {
+            Alert.alert("Erro ao fazer login", "Digite os compos corretamente")
+        }
     }
 
     const handleMessageButtonClick = () => {
         navigation.reset({
-            routes: [{name: 'SignUp'}]
+            routes: [{ name: 'SignUp' }]
         })
     }
 
@@ -33,7 +58,7 @@ export default () => {
                 <SignInput
                     IconSvg={EmailIcon}
                     placeholder="Digite seu e-mail"
-                    value={emamilFild}
+                    value={emailFild}
                     onChangeText={text => setEmailFild(text)} />
                 <SignInput
                     IconSvg={LockIcon}
