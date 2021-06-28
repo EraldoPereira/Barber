@@ -3,6 +3,8 @@ import { ActivityIndicator, View, StyleSheet } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import AsyncStorage from '@react-native-community/async-storage'
 
+import { UserContext } from '../contexts/UserContext'
+
 import Api from '../Api'
 
 import BarberLogo from '../assets/svg/barber.svg'
