@@ -1,11 +1,24 @@
 import React from 'react'
 import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
 
 import Stars from './Stars'
 
 export default ({ data }) => {
+
+    const navigation = useNavigation()
+
+    const handleClick = () => {
+        navigation.navigate('Barber', {
+            id: data.id,
+            avatar: data.avatar,
+            name: data.name,
+            stars: data.stars
+        })
+    }
+
     return (
-        <TouchableOpacity style={styles.container} activeOpacity={0.9} >
+        <TouchableOpacity style={styles.container} activeOpacity={0.9} onPress={handleClick} >
             <View style={{ flexDirection: 'row' }} >
                 <Image source={{ uri: data.avatar }} style={styles.image} />
                 <View style={styles.infoContainer} >

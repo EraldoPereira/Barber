@@ -41,10 +41,41 @@ export default {
         return json
     },
     getBarbers: async (lat=null, lng=null, address=null) => {
-        console.log("ADDRESS: ", address);
         const token = await AsyncStorage.getItem('token')
         const res = await fetch(`${BASE_API}/barbers?token=${token}&lat=${lat}&lng=${lng}&address=${address}`)
         const json = await res.json()
+        return json
+    },
+    logout: async () => {
+        const token = await AsyncStorage.getItem('token')
+        const req = await fetch(`${BASE_API}/auth/logout`,{
+            method: 'POST',
+            headers: {
+                'Accept': 'Application/json',
+                'Content-Type': 'Application/json'
+            },
+            body: JSON.stringify({ token })
+        })
+        const json = await req.json()
+        return json
+    },
+    getBarber: async (id) => {
+        const token = await AsyncStorage.getItem('token')
+        const res = await fetch(`${BASE_API}/barber/${id}?token=${token}`)
+        const json = res.json()
+        return json
+    },
+    setAppointment: async (userId, service, selectedYear, selectedMonth, selectedDay, selectedHour) => {
+        const token = await AsyncStorage.getItem('token')
+        const req = await fetch(`${BASE_API}/user/appointment`,{
+            method: 'POST',
+            headers: {
+                'Accept': 'Application/json',
+                'Content-Type': 'Application/json'
+            },
+            body: JSON.stringify({ token, id: userId, service: service, year: selectedYear, month: selectedMonth, day: selectedDay, hour: selectedHour })
+        })
+        const json = await req.json()
         return json
     }
 }
